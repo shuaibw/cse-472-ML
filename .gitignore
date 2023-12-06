@@ -1,1 +1,4 @@
 .vscode
+#ignore everything in offline2/data except .zip files
+offline2/data/*
+!offline2/data/*.zip
