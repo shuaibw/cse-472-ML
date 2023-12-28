@@ -251,7 +251,7 @@ class LogisticRegression:
     def predict(self, X):
         return np.round(sigmoid(np.dot(X, self.theta)))
 
-def AdaBoostClassifier(X, y, n_estimators=50, learner=LogisticRegression, learning_rate=0.1, num_iters=10000, error_thresh=0.5):
+def AdaBoostClassifier(X, y, n_estimators=50, learner=LogisticRegression, learning_rate=0.1, num_iters=2000, error_thresh=0.5):
     N = X.shape[0]
     n_samples = int(N * 0.55)
     W = np.full(N, (1 / N))
@@ -300,7 +300,7 @@ def AdaBoostClassifier(X, y, n_estimators=50, learner=LogisticRegression, learni
     
 def run_adaboost_analysis(X_train, y_train, X_test, y_test, title='Bl'):
     # Vary learners from 1 to 50 in steps of 5, and plot the accuracy, precision, recall and F1 scores on the test set
-    learners = np.arange(0, 51, 5)
+    learners = np.arange(0, 26, 5)
     learners[0] = 1
     accuracy = []
     precision = []
@@ -400,10 +400,10 @@ if __name__ == '__main__':
     data2_extra = 'data/adult/adult.test'
     data3_path = 'data/creditcardfraud/creditcard.csv'
     
-    print("....Training on dataset 3....")
-    train_on_dataset3()
-    print("....Training on dataset 2....")
-    train_on_dataset2()
+    # print("....Training on dataset 3....")
+    # train_on_dataset3()
+    # print("....Training on dataset 2....")
+    # train_on_dataset2()
     print("....Training on dataset 1....")
     train_on_dataset1()
     
