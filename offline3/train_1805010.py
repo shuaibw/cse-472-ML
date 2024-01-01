@@ -336,7 +336,7 @@ if __name__ == "__main__":
     C_counts = confusion_matrix(y_test_raw, y_hat)
     C = confusion_matrix(y_test_raw, y_hat, normalize='true')
     fig = plt.figure(figsize=(10, 10))
-    plt.imshow(C, 'Blues', vmax=0.05)
+    plt.imshow(C, 'Blues', vmax=0.1)
     # also show the numbers
     for i in range(26):
         for j in range(26):

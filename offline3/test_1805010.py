@@ -2,7 +2,7 @@ import pickle
 from train_1805010 import Network, DenseLayer, ActivationLayer, DropoutLayer, load_data
 from sklearn.metrics import f1_score
 
-with open('f1_91.pkl', 'rb') as f:
+with open('model_1805010.pickle', 'rb') as f:
     model = pickle.load(f)
 
 X_test, y_test, y_test_raw = load_data(train=False)
