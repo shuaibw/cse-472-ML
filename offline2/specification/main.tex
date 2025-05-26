@@ -1,0 +1,203 @@
+\documentclass[11pt, a4paper]{article}
+
+% Setting up the page geometry
+\usepackage[margin=1in]{geometry}
+
+% Including necessary packages for text formatting and math
+\usepackage{amsmath, amssymb} % Math symbols and environments
+\usepackage{mathtools} % Enhanced math typesetting
+\usepackage{enumitem} % Customizable lists
+\usepackage{booktabs} % Professional tables
+\usepackage{titlesec} % Custom section formatting
+\usepackage{parskip} % Paragraph spacing
+\usepackage{hyperref} % Hyperlinks for references
+\usepackage{url} % URL formatting
+\usepackage{verbatim} % For verbatim text (code listings)
+\usepackage{listings} % For code formatting
+
+% Configuring hyperlinks
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+% Setting up fonts (using standard Computer Modern for PDFLaTeX compatibility)
+\usepackage{mathptmx} % Times-like font for math and text
+\usepackage[T1]{fontenc} % Proper font encoding
+\usepackage[utf8]{inputenc} % UTF-8 input encoding
+
+% Customizing section titles
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{1em}{}
+
+% Customizing list spacing
+\setlist[itemize]{itemsep=0.5em, parsep=0.5em}
+\setlist[enumerate]{itemsep=0.5em, parsep=0.5em}
+
+% Configuring listings for pseudocode
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    columns=flexible,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    keywordstyle=\bfseries,
+    showstringspaces=false
+}
+
+% Document begins
+\begin{document}
+
+% Title and header
+\begin{center}
+    \textbf{\Large CSE472 (Machine Learning Sessional)} \\[0.5em]
+    \textbf{Assignment 2: Logistic Regression and AdaBoost for Classification}
+\end{center}
+
+\vspace{1em}
+
+% Introduction
+\section{Introduction}
+In ensemble learning, we combine decisions from multiple weak learners to solve a classification problem. In this assignment, you will implement a Logistic Regression (LR) classifier and use it within AdaBoost algorithm. For any query about this document, contact Sharif sir.
+
+% Programming Language/Platform
+\section{Programming Language/Platform}
+Python 3 [Hard requirement]
+
+% Dataset Preprocessing
+\section{Dataset Preprocessing}
+You need to demonstrate the performance and efficiency of your implementation for the following three different datasets:
+\begin{enumerate}
+    \item \url{https://www.kaggle.com/blastchar/telco-customer-churn}
+    \item \url{https://archive.ics.uci.edu/ml/datasets/adult}
+    \item \url{https://www.kaggle.com/mlg-ulb/creditcardfraud}
+\end{enumerate}
+
+They differ in size, number and types of attributes, data quality (missing attribute values), data descriptions (whether train and test data are separate, attribute description format, etc.), etc. Your core implementation for the Logistic Regression and Adaboost model must work for all three datasets without any modification. You can (possibly need to) add a separate dataset-specific preprocessing script/module/function to feed your learning engine a standardized data file in matrix format. On the evaluation day, you will likely be given another new (hopefully smaller) dataset for which you must create a preprocessor. Any lack of understanding about your own code will severely hinder your chances to make it. Here are some suggestions for you:
+
+\begin{enumerate}
+    \item Design and develop your own code. You can take help from tons of materials available on the web, but do it yourself. This is the only way to ensure you know every subtle issue that needs to be tweaked during customization.
+    \item Don't assume anything about your dataset. Keep an open mind. Deal with their subtleties in preprocessing.
+    \item To get an idea about different data preprocessing tasks and techniques, specifically how to handle missing values and numeric features using information gain [AIMA $4^{\text{th}}$ ed. 19.3.3], visit the following link: \url{http://www.cs.ccsu.edu/~markov/ccsu_courses/DataMining-3.html}
+    \item Use Python library functions for common preprocessing tasks such as normalization, binarization, discretization, imputation, encoding categorical features, scaling, etc. This will make your life easier, and you will thank me for enforcing Python implementation. Visit \url{http://scikit-learn.org/stable/modules/preprocessing.html} for more information.
+    \item Go through the dataset description given in the link carefully. Misunderstanding will lead to incorrect preprocessing.
+    \item For the third dataset, don't worry if your implementation takes long time. You can use a smaller subset (randomly selected 20000 negative samples + all positive samples) of that dataset for demonstration purpose. Do not exclude any positive sample, as they are scarce.
+    \item Split your preprocessed datasets into 80\% training and 20\% testing data when the dataset is not split already. All of the learning should use only training data. Test data should only be used for performance measurement. You can use the Scikit-learn built-in function for the train-test split. For splitting guidelines, see \url{https://developers.google.com/machine-learning/crash-course/training-and-test-sets/splitting-data}.
+\end{enumerate}
+
+% Logistic Regression Tweaks
+\section{Logistic Regression Tweaks for Weak Learning}
+\begin{enumerate}
+    \item Use information gain to evaluate attribute importance in order to use a subset of features.
+    \item Control the number of features using an external parameter.
+    \item Early terminate Gradient Descent if error in the training set becomes $<0.5$. Parameterize your function to take the threshold as an input. [If you set it to 0, then Gradient Descent will run its own natural course, without early stopping]
+    \item Use sigmoid function. You need to calculate the gradient and derive the update rules accordingly.
+    \[
+    \sigma(x) = \frac{e^x}{1 + e^x}
+    \]
+\end{enumerate}
+
+% AdaBoost Implementation
+\section{AdaBoost Implementation}
+\begin{enumerate}
+    \item Use the following pseudo-code for AdaBoost implementation:
+    \begin{lstlisting}
+function AdaBoost(examples, L_weak, K) returns a weighted majority hypothesis
+    inputs: examples, set of N labeled examples (x_1, y_1), ..., (x_N, y_N)
+            L_weak, a learning algorithm
+            K, the number of hypotheses in the ensemble
+    local variables: w, a vector of N example weights, initially 1/N
+                     h, a vector of K hypotheses
+                     z, a vector of K hypothesis weights
+    for k = 1 to K do
+        data <- Resample(examples, w)
+        h[k] <- L_weak(data)
+        error <- 0
+        for j = 1 to N do
+            if h[k](x_j) != y_j then error <- error + w[j]
+        if error > 0.5 then continue
+        for j = 1 to N do
+            if h[k](x_j) = y_j then w[j] <- w[j] * error / (1 - error)
+        w <- Normalize(w)
+        z[k] <- log((1 - error) / error)
+    return Weighted_Majority(h, z)
+    \end{lstlisting}
+    \item As the weak/base learner, use Logistic Regression. You can explore different ways to speed up the learning of the base models, sacrificing the accuracy, so long as the learning performs better than random guess (i.e., weak learner). For example, you can use a small subset of features or reduce the number of iterations in gradient descent, etc.
+    \item Adaboost should treat the base learner as a black box (in this case a Logistic Regression) and communicate with it via a generic interface that inputs resampled data and outputs a classifier.
+    \item In each round, resample from training data and fit current hypothesis (Logistic Regression) using resampled data but calculate the error over original (weighted) training data.
+    \item After learning the ensemble classifier, evaluate performance over test data. Don't get confused over which dataset to use at which step.
+\end{enumerate}
+
+% Performance Evaluation
+\section{Performance Evaluation}
+\begin{enumerate}
+    \item Always use a constant seed for any random number generation so that each run produces the same output.
+    \item Report the following performance measures of Logistic Regression implementation on both training and testing data for each of the three datasets. Use the following table format for each dataset:
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{lcc}
+            \toprule
+            \textbf{Performance Measure} & \textbf{Training} & \textbf{Test} \\
+            \midrule
+            Accuracy & & \\
+            True positive rate (sensitivity, recall, hit rate) & & \\
+            True negative rate (specificity) & & \\
+            Positive predictive value (precision) & & \\
+            False discovery rate & & \\
+            F1 score & & \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    \item Report the accuracy of AdaBoost implementation with Logistic Regression ($K=5, 10, 15$, and 20 rounds) on both training and testing data for each of the three datasets:
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{lcc}
+            \toprule
+            \textbf{Number of Boosting Rounds} & \textbf{Training} & \textbf{Test} \\
+            \midrule
+            5 & & \\
+            10 & & \\
+            15 & & \\
+            20 & & \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{enumerate}
+
+% Submission
+\section{Submission}
+\begin{enumerate}
+    \item Upload the codes in Moodle within 10:00 P.M. of 9\textsuperscript{th} December, 2023 (Saturday). (Strict deadline)
+    \item You need to submit a report file in pdf format containing the following items (No hardcopy is required):
+    \begin{enumerate}
+        \item Clear instructions on how to run your script to train your model(s) and test them. (For example, which part needs to be commented out when training each dataset, how to run evaluation, etc.) We would like to run the script in our computers before the sessional class.
+        \item The tables shown in the performance evaluation section with your experimental results.
+        \item Any observations.
+    \end{enumerate}
+    \item Write code in a single *.py file, then rename it with your student id. For example, if your student id is 1805123, then your code file name should be ``1805123.py'' and the report name should be ``1805123.pdf''.
+    \item Finally, make a main folder, put the code and report in it, and rename the main folder as your student id. Then zip it and upload it.
+\end{enumerate}
+
+% Evaluation
+\section{Evaluation}
+\begin{enumerate}
+    \item You have to reproduce your experiments during in-lab evaluation. Keep everything ready to minimize delay.
+    \item You are likely to give online tasks during evaluation which will require you to modify your code.
+    \item You will be tested on your understanding through viva-voce.
+    \item If evaluators like performance, efficiency, or modularity of a particular code, they can give bonus marks. This will be completely at the discretion of evaluators.
+    \item You are encouraged to bring your computer in the sessional to avoid any hassle. But in that case, ensure an internet connection as you have to instantly download your code from the Moodle and show it.
+\end{enumerate}
+
+% Warning
+\section{Warning}
+\begin{enumerate}
+    \item Don't copy! We regularly use copy checkers.
+    \item First-time copier and copyee will receive negative marking because of dishonesty. Their default is bigger than those who will not submit.
+    \item Repeated occurrence will lead to severe departmental action and jeopardize your academic career. We expect fairness and honesty from you. Don't disappoint us!
+\end{enumerate}
+
+\end{document}
