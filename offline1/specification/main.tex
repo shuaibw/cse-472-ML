@@ -1,0 +1,144 @@
+\documentclass[11pt, a4paper]{article}
+
+% Setting up the page geometry
+\usepackage[margin=1in]{geometry}
+
+% Including necessary packages for text formatting and math
+\usepackage{amsmath, amssymb} % Math symbols and environments
+\usepackage{mathtools} % Enhanced math typesetting
+\usepackage{enumitem} % Customizable lists
+\usepackage{booktabs} % Professional tables
+\usepackage{titlesec} % Custom section formatting
+\usepackage{parskip} % Paragraph spacing
+\usepackage{hyperref} % Hyperlinks for references
+\usepackage{url} % URL formatting
+
+% Configuring hyperlinks
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+% Setting up fonts (using standard Computer Modern for PDFLaTeX compatibility)
+\usepackage{mathptmx} % Times-like font for math and text
+\usepackage[T1]{fontenc} % Proper font encoding
+\usepackage[utf8]{inputenc} % UTF-8 input encoding
+
+% Customizing section titles
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{1em}{}
+
+% Customizing list spacing
+\setlist[itemize]{itemsep=0.5em, parsep=0.5em}
+\setlist[enumerate]{itemsep=0.5em, parsep=0.5em}
+
+% Document begins
+\begin{document}
+
+% Title and header
+\begin{center}
+    \textbf{\Large Linear Algebra for Machine Learning} \\[0.5em]
+    \textbf{CSE 472 Assignment 1} \\[0.5em]
+    \normalsize Courtesy: Md. Tareq Mahmood, Assistant Professor (on leave), CSE, BUET
+\end{center}
+
+\vspace{1em}
+
+% References section
+\section*{References}
+\begin{enumerate}
+    \item Chapter 2 (Linear Algebra) of the ``Deep Learning Book'' by Aaron Courville, Ian Goodfellow, and Yoshua Bengio. \url{deeplearningbook.org/contents/linear_algebra.html}
+    \item ``Introduction to Linear Algebra for Applied Machine Learning with Python.'' 1 Aug. 2020, \url{pabloinsente.github.io/intro-linear-algebra}.
+\end{enumerate}
+
+% Link to files
+Find the necessary files here: \textbf{CSE 472 Assignment 1 Files}
+
+% Task 1
+\section{Task 1: Matrix Transformation}
+Go through and run the notebook ``matrix-transformations-and-eigen-decomposition'' to get an intuition about:
+\begin{itemize}
+    \item How can a matrix transform a vector?
+    \item What do columns of matrices mean in terms of transformation?
+    \item What does eigenvector mean?
+\end{itemize}
+(We recommend you also read the whole of Chapter 2 of the Deep Learning Book.)
+
+Then,
+\begin{itemize}
+    \item Change the cell values of matrix $\mathbf{M}$ (there can be two such matrices; find one of them) so that it does the following transformation.
+    \item Run the whole notebook again and submit.
+\end{itemize}
+
+% Task 2
+\section{Task 2: Eigen Decomposition}
+
+\subsection{SubTask 2A: Random Matrix (random\_eigen.py)}
+\begin{itemize}
+    \item Take the dimensions of matrix $n$ as input.
+    \item Produce a random $n \times n$ invertible matrix $\mathbf{A}$. For the purpose of demonstrating, every cell of $\mathbf{A}$ will be an integer.
+    \item Perform Eigen Decomposition using NumPy's library function.
+    \item Reconstruct $\mathbf{A}$ from eigenvalues and eigenvectors (refer to Section 2.7).
+    \item Check if the reconstruction worked properly. (\texttt{np.allclose} will come in handy.)
+    \item You should be able to explain how your code ensures that the way you generated $\mathbf{A}$ ensures invertibility.
+\end{itemize}
+
+\subsection{SubTask 2B: Symmetric Matrix (symmetric\_eigen.py)}
+\begin{itemize}
+    \item Take the dimensions of matrix $n$ as input.
+    \item Produce a random $n \times n$ invertible symmetric matrix $\mathbf{A}$. For the purpose of demonstrating, every cell of $\mathbf{A}$ will be an integer.
+    \item Perform Eigen Decomposition using NumPy's library function.
+    \item Reconstruct $\mathbf{A}$ from eigenvalues and eigenvectors (refer to Section 2.7).
+    \item Check if the reconstruction worked properly. (\texttt{np.allclose} will come in handy.)
+    \item Please be mindful of applying efficient methods (this will bear marks).
+    \item You should be able to explain how your code ensures that the way you generated $\mathbf{A}$ ensures invertibility and symmetry.
+\end{itemize}
+
+% Task 3
+\section{Task 3: Image Reconstruction using Singular Value Decomposition (image\_reconstruction.py)}
+\begin{itemize}
+    \item Take a photo of a book's cover within your vicinity. Let's assume it is named \texttt{image.jpg}.
+    \item Use OpenCV or similar frameworks to read \texttt{image.jpg}. Transform it to grayscale using functions such as \texttt{cv2.cvtColor()}. If you wish, resize to lower dimensions ($\sim 500$) for faster computation.
+    \item The grayscale image will be an $n \times m$ matrix $\mathbf{A}$.
+    \item Perform Singular Value Decomposition using NumPy's library function.
+    \item Given a matrix $\mathbf{A}$ and an integer $k$, write a function \texttt{low\_rank\_approximation(A, k)} that returns the $k$-rank approximation of $\mathbf{A}$.
+    \item Now vary the value of $k$ from 1 to $\min(n, m)$ (take at least 10 such values in the interval). In each case, plot the resultant $k$-rank approximation as a grayscale image. Observe how the images vary with $k$. You can find a sample intended output in the shared folder.
+    \item Find the lowest $k$ such that you can clearly read out the author's name from the image corresponding to the $k$-rank approximation.
+\end{itemize}
+
+% Marking Rubric
+\section{Marking Rubric}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Task} & \textbf{Percentage} \\
+        \midrule
+        Task 1 & 20\% \\
+        Task 2A & 15\% \\
+        Task 2B & 15\% \\
+        Task 3 & 50\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Since most of the tasks you have to do here are basically invocations of library functions, it is expected that you understand the underlying concepts properly to get full marks.
+
+% Submission
+\section{Submission}
+\begin{verbatim}
+1805xyz
+  |-- matrix-transformations-and-eigen-decomposition.ipynb
+  |-- random_eigen.py
+  |-- symmetric_eigen.py
+  |-- image_reconstruction.py
+  |-- image.jpg
+\end{verbatim}
+Zip the folder and rename it to \texttt{[Student\_ID].zip}.
+
+\textbf{Deadline}: November 25, 2023, Saturday, 10 PM
+
+\end{document}
